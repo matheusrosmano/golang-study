@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"v1/golang-web/db"
 )
 
@@ -101,4 +102,16 @@ func ConsultarProduto(id string) Produto {
 	}
 	defer db.Close()
 	return produtoParaAtualizar
+}
+
+func AtualizaProduto(id int, nome string, descricao string, preco float64, quantidade int) {
+	db := db.ConectaDb()
+
+	atualizaProduto, err := db.Prepare("update produtos set nome = $1, descricao = $2, preco = $3, quantidade = $4 where id=$5")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	atualizaProduto.Exec(nome, descricao, preco, quantidade, id)
+	defer db.Close()
 }
